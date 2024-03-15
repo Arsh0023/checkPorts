@@ -2,6 +2,7 @@ import os
 import nmap3
 import config
 import sqlite3
+import mysql.connector
 from pprint import pprint
 from get_ips import get_public_ips
 
@@ -11,7 +12,12 @@ if __name__ == '__main__':
 
     nmap = nmap3.Nmap()
 
-    conn = sqlite3.connect('ports.db')
+    conn = mysql.connector.connect(
+    host="127.0.0.1",
+    user="your_username",
+    password="your_password"
+    )
+
     cursor = conn.cursor()
 
     #create hosts table
@@ -43,13 +49,7 @@ if __name__ == '__main__':
         print(f"Performing check for - {ip}")
         #nmap.scan_command(target=ip, arg='-p-')
         data = nmap.scan_top_ports(target=ip)
-        #pprint(data)
-
-        #pprint(data.items())
-        # pprint(details)
-        # print(type(details))
-        # print(details.keys())
-        # print(details['hostname'][0]['name'])
+        
         details = data[ip]
         cursor.execute('''
         INSERT INTO hosts (ip_address, hostname, state_reason, state_ttl, state)
