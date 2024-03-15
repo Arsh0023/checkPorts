@@ -83,6 +83,5 @@ if __name__ == '__main__':
                     ))
         except Exception as e:
             print(f'Error!!! {e} for {ip}')
-        finally:
-            conn.commit()
-            conn.close()
+    conn.commit()
+    conn.close()
