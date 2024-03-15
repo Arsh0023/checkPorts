@@ -53,32 +53,34 @@ if __name__ == '__main__':
             data = nmap.scan_top_ports(target=ip)
 
             details = data[ip]
-            cursor.execute('''
-                INSERT INTO hosts (ip_address, hostname, state_reason, state_ttl, state)
-                VALUES (%s, %s, %s, %s, %s)
-            ''', (
-                ip,
-                details['hostname'][0]['name'],
-                details['state']['reason'],
-                int(details['state']['reason_ttl']),
-                details['state']['state']
-            ))
-            host_id = cursor.lastrowid
+            if all(value is not None for value in [ip, details['hostname'][0]['name'], details['state']['reason'], details['state']['reason_ttl'], details['state']['state']]):
+                cursor.execute('''
+                    INSERT INTO hosts (ip_address, hostname, state_reason, state_ttl, state)
+                    VALUES (%s, %s, %s, %s, %s)
+                ''', (
+                    ip,
+                    details['hostname'][0]['name'],
+                    details['state']['reason'],
+                    int(details['state']['reason_ttl']),
+                    details['state']['state']
+                ))
+                host_id = cursor.lastrowid
 
             # Insert data into ports table
             for port in details['ports']:
-                cursor.execute('''
-                    INSERT INTO ports (host_id, port_id, protocol, reason, reason_ttl, state, service_name)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
-                ''', (
-                    host_id,
-                    int(port['portid']),
-                    port['protocol'],
-                    port['reason'],
-                    int(port['reason_ttl']),
-                    port['state'],
-                    port['service']['name']
-                ))
+                if all(value is not None for value in [host_id, port['portid'], port['protocol'], port['reason'], port['reason_ttl'], port['state'], port['service']['name']]):
+                    cursor.execute('''
+                        INSERT INTO ports (host_id, port_id, protocol, reason, reason_ttl, state, service_name)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    ''', (
+                        host_id,
+                        int(port['portid']),
+                        port['protocol'],
+                        port['reason'],
+                        int(port['reason_ttl']),
+                        port['state'],
+                        port['service']['name']
+                    ))
         except Exception as e:
             print(f'Error!!! {e} for {ip}')
         finally:
