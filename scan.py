@@ -1,12 +1,20 @@
 import os
 import nmap3
 import config
-import sqlite3
 import mysql.connector
 from pprint import pprint
 from get_ips import get_public_ips
 
 publicIps = get_public_ips(config.REGION)
+portsToScan = [
+    '0-1000',
+    '3000-4000',
+    '6379',
+    '8000-9000',
+    '9200',
+    '27017'    
+]
+portsToScan = '--top-ports 100 -p ' + ','.join(portsToScan)
 
 if __name__ == '__main__':
     nmap = nmap3.Nmap()
