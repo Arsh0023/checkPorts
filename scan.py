@@ -58,7 +58,7 @@ if __name__ == '__main__':
     for ip in publicIps:
         try:
             print(f"Performing check for - {ip}")
-            data = nmap.scan_top_ports(target=ip)
+            data = nmap.scan_top_ports(target=ip, args=portsToScan)
 
             details = data[ip]
             if all(value is not None for value in [ip, details['hostname'][0]['name'], details['state']['reason'], details['state']['reason_ttl'], details['state']['state']]):
